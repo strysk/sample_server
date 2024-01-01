@@ -1,30 +1,20 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
+	"sample_server/api/usecase"
+
+	"github.com/gorilla/mux"
 )
 
-type Message struct {
-	Text string `json:"text"`
-}
-
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	message := Message{Text: "hello"}
-	jsonResponse, err := json.Marshal(message)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResponse)
-}
-
 func main() {
-	http.HandleFunc("/api", handleRequest)
-	log.Println("Server is ruuning on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	router := mux.NewRouter()
+
+	router.HandleFunc("/posts", usecase.GetPosts).Methods("GET")
+	router.HandleFunc("/posts", usecase.CreatePost).Methods("POST")
+	router.HandleFunc("/posts/{id}", usecase.GetPost).Methods("GET")
+	router.HandleFunc("/posts/{id}", usecase.UpdatePost).Methods("PUT")
+	router.HandleFunc("/posts/{id}", usecase.DeletePost).Methods("DELETE")
+
+	http.ListenAndServe(":8000", router)
 }
