@@ -29,16 +29,16 @@ func Init() {
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	var posts []Post
-	result, err := Db.Query("SELECT id, title from posts")
+	result, err := Db.Query("SELECT id, text from posts")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 		var post Post
-		err := result.Scan(&post.ID, &post.Title)
+		err := result.Scan(&post.ID, &post.Text)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -50,14 +50,14 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 func GetPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	result, err := Db.Query("SELECT id, title FROM posts WHERE id = ?", params["id"])
+	result, err := Db.Query("SELECT id, text FROM posts WHERE id = ?", params["id"])
 	if err != nil {
 		panic(err.Error())
 	}
 	defer result.Close()
 	var post Post
 	for result.Next() {
-		err := result.Scan(&post.ID, &post.Title)
+		err := result.Scan(&post.ID, &post.Text)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -66,7 +66,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-	stmt, err := Db.Prepare("INSERT INTO posts(title) VALUES(?)")
+	stmt, err := Db.Prepare("INSERT INTO posts(text) VALUES(?)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -76,7 +76,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	keyVal := make(map[string]string)
 	json.Unmarshal(body, &keyVal)
-	title := keyVal["title"]
+	title := keyVal["text"]
 	_, err = stmt.Exec(title)
 	if err != nil {
 		panic(err.Error())
@@ -86,7 +86,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	stmt, err := Db.Prepare("UPDATE posts SET title = ? WHERE id = ?")
+	stmt, err := Db.Prepare("UPDATE posts SET text = ? WHERE id = ?")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -96,7 +96,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 	keyVal := make(map[string]string)
 	json.Unmarshal(body, &keyVal)
-	newTitle := keyVal["title"]
+	newTitle := keyVal["text"]
 	_, err = stmt.Exec(newTitle, params["id"])
 	if err != nil {
 		panic(err.Error())
