@@ -12,12 +12,20 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.1.2
   flutter_hooks: ^0.20.4
+  freezed_annotation: ^2.4.1
+  riverpod_annotation: ^3.0.0-dev.3
+  hooks_riverpod: ^3.0.0-dev.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.8
+  freezed: ^2.4.6
+  riverpod_generator: ^3.0.0-dev.11
+  custom_lint: ^0.5.11
+  riverpod_lint: ^3.0.0-dev.4
 
 flutter:
   uses-material-design: true
